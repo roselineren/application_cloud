@@ -25,3 +25,5 @@ if __name__ == "__main__":
    df = pd.DataFrame(item_details)
 
    print(df.head())
+
+   
