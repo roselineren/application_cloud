@@ -24,8 +24,7 @@ def home():
     lim = 5 if lim is None else int(lim)
     return render_template('base.html')
 
-def index():
-    return render_template('index.html')
+
 
 ## Queries
 def query_ru1():
@@ -47,7 +46,8 @@ def query_ru1():
         }}
     ]
     result = list(db.employees.aggregate(pipeline))
-    return result
+    df = pd.DataFrame(result)
+    return df
 
 def query_ru2():
     query = {
@@ -212,6 +212,7 @@ def rda6():
 
 @app.route('/adminView', methods=("POST", "GET"))
 def adminView():
+    return None
 
     #stats et temps execution 
 
