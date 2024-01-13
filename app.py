@@ -10,7 +10,7 @@ session = MongoSession(
     password='SuperPassword!1'
 )
 
-db = session.connection['employee']
+db = session.connection['employee_db']
 collection = db["employees"]
 
 classes = "table table-striped table-bordered"
@@ -104,6 +104,24 @@ def query_ru6():
     df = pd.DataFrame(result)
     return df
 
+
+def query_rda1():
+    pipeline = [
+        {"$match": {"gender": "F", "departments.is_manager": True}},
+        {"$project": {
+            "hireYear": {"$year": {"$dateFromString": {"dateString": "$hire_date"}}}
+        }},
+        {"$group": {
+            "_id": "$hireYear",
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"_id": 1}}
+    ]
+    result = list(db.employees.aggregate(pipeline))
+    df = pd.DataFrame(result)
+    return df
+
+
 def query_rda4():
     pipeline = [
         {"$unwind": "$departments"},
@@ -170,51 +188,75 @@ def query_rda6():
 def ru1():
     data = query_ru1()
     html_data = data.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete 1", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Ru 1: Afficher le nombre d'employés par sexe et par département.", result=html_data)
 
 @app.route('/ru2')
 def ru2():
     df = query_ru2()
     html_data = df.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete 2", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Ru 2:Afficher la liste des employés nés après 1963 et le nom de leur département.	", result=html_data)
 
 
 @app.route('/ru3')
 def ru3():
     df = query_ru3()
     html_data = df.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete 3", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Ru 3:Afficher les détails des employés qui ont quitté l'entreprise.", result=html_data)
 
 
 @app.route('/ru6')
 def ru6():
     df = query_ru6()
     html_data = df.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete 6", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Ru6:Donner les noms  des trois employés les mieux payés du département 'Finances'", result=html_data)
+
+
+@app.route('/rda1')
+def rda1():
+    df = query_rda1()
+    html_data = df.to_html(classes="table table-striped table-bordered", index=False)
+    return render_template('simple.html', requete_nb="Requete Rda1:Afficher le nombre de femmes managers par année d'embauche", result=html_data)
 
 @app.route('/rda4')
 def rda4():
     df = query_rda4()
     html_data = df.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete Rda4", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Rda4:Pour chaque département, affichez les statistiques sur les employés et les salaires.", result=html_data)
 
 @app.route('/rda5')
 def rda5():
     df = query_rda5()
     html_data = df.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete Rda5", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Rda5:Comparer les salaires moyens dans les services de vente et de marketing	", result=html_data)
 
 @app.route('/rda6')
 def rda6():
     df = query_rda6()
     html_data = df.to_html(classes="table table-striped table-bordered", index=False)
-    return render_template('simple.html', requete_nb="Requete Rda6", result=html_data)
+    return render_template('simple.html', requete_nb="Requete Rda6: Dresser la liste des employés du département Production", result=html_data)
 
 @app.route('/adminView', methods=("POST", "GET"))
 def adminView():
-    return None
+    infos = db.command("collstats", "employees")
+    indexes_existants = list(infos["indexSizes"].keys())
+    nb_shards = len(infos["shards"])
+    nb_chunks = infos["nchunks"]
+    stats = []
+    for k, v in infos["shards"].items():
+        stats.append({
+            "Nom du Shard": k,
+            "Nombre de documents": infos["shards"][k]["count"],
+            "Taille des données stockées": str(round(infos["shards"][k]["size"] * 1e-6, 2)) + " Mo",
+            "Pourcentage des données stockées": str(round(infos["shards"][k]["size"] / infos["size"] * 100, 2)) + "%"
+        })
+    stats = pd.DataFrame(stats).sort_values("Nom du Shard")
+    return render_template('admin.html',
+                           indexes_existants=indexes_existants,
+                           nb_shards=nb_shards,
+                           nb_chunks=nb_chunks,
+                           result=stats.to_html(classes="table table-striped table-bordered", index=False))
 
-    #stats et temps execution 
+
 
 if __name__ == '__main__':
     app.run(debug=True)
