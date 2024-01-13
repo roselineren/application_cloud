@@ -1,23 +1,76 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Page d'Accueil</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Page d'Accueil - App Cloud</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            margin: 30px;
+        }
+        .header-color {
+            background-color: #007bff54; 
+            color: rgb(40, 119, 246);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .menu-item {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue sur la Page d'Accueil</h1>
-    <ul>
-        <li><a href="{{ url_for('ru1') }}">Requête Ru1</a></li>
-        <li><a href="{{ url_for('ru2') }}">Requête Ru2</a></li>
-        <li><a href="{{ url_for('ru3') }}">Requête Ru3</a></li>
-        <li><a href="{{ url_for('ru6') }}">Requête Ru6</a></li>
-        <li><a href="{{ url_for('rda1') }}">Requête Rda1</a></li>
 
-        <li><a href="{{ url_for('rda4') }}">Requête Rda4</a></li>
-        <li><a href="{{ url_for('rda5') }}">Requête Rda5</a></li>
-        <li><a href="{{ url_for('rda6') }}">Requête Rda6</a></li>
-        <li><a href="{{ url_for('adminView') }}">Administrator View</a></li>
+    <div class="header-color">
+        <h1 class="my-3">Bienvenue sur l'App Cloud Groupe C Employees- Page d'Accueil</h1>
+    </div>
+    <h2 class="mt-5">Menu Principal</h2>
+    <br>
+    
+    <!-- Section pour les requêtes RU -->
+    <h4>Vues Utilisateur Standard</h4>
+    <div class="d
+-flex flex-column">
+<div class="menu-item">
+<a href="{{ url_for('ru1') }}" class="btn btn-outline-primary">Requête Ru1</a>
+</div>
+<div class="menu-item">
+<a href="{{ url_for('ru2') }}" class="btn btn-outline-primary">Requête Ru2</a>
+</div>
+<div class="menu-item">
+<a href="{{ url_for('ru3') }}" class="btn btn-outline-primary">Requête Ru3</a>
+</div>
+<div class="menu-item">
+<a href="{{ url_for('ru6') }}" class="btn btn-outline-primary">Requête Ru6</a>
+</div>
+</div>
 
-        <!-- Ajoutez d'autres liens si nécessaire -->
-    </ul>
+<!-- Section pour les requêtes RDA -->
+<h4 class="mt-4">Vues Analyste/Décisionnaire</h4>
+<div class="d-flex flex-column">
+<div class="menu-item">
+<a href="{{ url_for('rda1') }}" class="btn btn-outline-primary">Requête Rda1</a>
+</div>
+<div class="menu-item">
+<a href="{{ url_for('rda4') }}" class="btn btn-outline-primary">Requête Rda4</a>
+</div>
+<div class="menu-item">
+<a href="{{ url_for('rda5') }}" class="btn btn-outline-primary">Requête Rda5</a>
+</div>
+<div class="menu-item">
+<a href="{{ url_for('rda6') }}" class="btn btn-outline-primary">Requête Rda6</a>
+</div>
+</div>
+
+<!-- Section pour l'Administration -->
+<h4 class="mt-4">Vue Administrateur</h4>
+<div class="d-flex flex-column">
+    <div class="menu-item">
+        <a href="{{ url_for('adminView') }}" class="btn btn-outline-primary">Vue Administrateur</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 </body>
 </html>
