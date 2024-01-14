@@ -1,7 +1,10 @@
 from flask import Flask, render_template, redirect, request,url_for
 from ssh_pymongo import MongoSession
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 import pickle
 
 app = Flask(__name__)
@@ -30,28 +33,27 @@ def home():
 with open('dictionaries.pkl', 'rb') as f:
     execution_times_1shard, execution_times_2shard, execution_times_3shard, execution_times_4shard, execution_times_5shard, execution_times_6shard = pickle.load(f)
 queries = ['ru1', 'ru2', 'ru3', 'ru6', 'rda1', 'rda4', 'rda5', 'rda6']
-def plot_times(queries):
+
+
     
 
-    for query in queries:
-        plt.plot(execution_times_1shard[query], label='execution_times_1shard')
-        plt.plot(execution_times_2shard[query], label='execution_times_2shard')
-        plt.plot(execution_times_3shard[query], label='execution_times_3shard')
-        plt.plot(execution_times_4shard[query], label='execution_times_4shard')
-        plt.plot(execution_times_5shard[query], label='execution_times_5shard')
-        plt.plot(execution_times_5shard[query], label='execution_times_6shard')
+for query in queries:
+    plt.plot(execution_times_1shard[query], label='execution_times_1shard')
+    plt.plot(execution_times_2shard[query], label='execution_times_2shard')
+    plt.plot(execution_times_3shard[query], label='execution_times_3shard')
+    plt.plot(execution_times_4shard[query], label='execution_times_4shard')
+    plt.plot(execution_times_5shard[query], label='execution_times_5shard')
+    plt.plot(execution_times_6shard[query], label='execution_times_6shard')
 
-        plt.title(f'Comparaison des valeurs de {query}')
-        plt.xlabel('Index')
-        plt.ylabel('Valeur')
-        plt.legend()
-         # Save the figure to a file
-        filename = f'static/{query}_times.png'
-        plt.savefig(filename)
-        plt.close()  # Close the figure to free up memory
-    return [url_for('static', filename=f'{query}_times.png') for query in queries]
-
-
+    plt.title(f'Comparaison des valeurs de {query}')
+    plt.xlabel('Index')
+    plt.ylabel('Valeur')
+    plt.legend()
+        # Save the figure to a file
+    filename = f'static/{query}_times.png'
+    plt.savefig(filename)
+    plt.close()  # Close the figure to free up memory
+        
 
 ## Queries
 def query_ru1():
@@ -269,7 +271,7 @@ def adminView():
     nb_shards = len(infos["shards"])
     nb_chunks = infos["nchunks"]
     stats = []
-    plots_urls=plot_times(queries)
+    
     for k, v in infos["shards"].items():
         stats.append({
             "Nom du Shard": k,
@@ -283,7 +285,7 @@ def adminView():
                            indexes_existants=indexes_existants,
                            nb_shards=nb_shards,
                            nb_chunks=nb_chunks,
-                           result=stats.to_html(classes="table table-striped table-bordered",index=False), plot_urls=plot_urls)
+                           result=stats.to_html(classes="table table-striped table-bordered",index=False))
 
 
 
